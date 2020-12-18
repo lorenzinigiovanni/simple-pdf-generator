@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "lib": [
+            "es6",
+            "es2019",
+            "es2020.promise",
+            "es2020.bigint",
+            "es2020.string",
+            "DOM"
+        ],
+        "module": "commonjs",
+        "target": "es2019",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "outDir": "./lib",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "declaration": true,
+        "removeComments": true
+    },
+    "include": [
+        "./src"
+    ]
+}
