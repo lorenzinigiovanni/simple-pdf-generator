@@ -36,6 +36,8 @@
     "stringify-object": "^3.3.0"
   },
   "scripts": {
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "examples": "ts-node examples/examples.ts",
+    "lint": "eslint . --ext .ts"
   }
 }

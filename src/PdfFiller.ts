@@ -1,6 +1,6 @@
 import { Asset, PdfGenerator } from './PdfGenerator';
-import path from 'path'
-import fs from 'fs'
+import path from 'path';
+import fs from 'fs';
 import stringifyObject from 'stringify-object';
 import puppeteer from 'puppeteer';
 
@@ -19,7 +19,7 @@ interface PdfField {
 export function PdfField(options: PdfFieldOptions) {
     return function (target: any, propertyKey: string): void {
         PdfFieldClass.registerDecorator(target, propertyKey, options);
-    }
+    };
 }
 
 class PdfFieldClass {
@@ -49,13 +49,13 @@ interface PdfTableOptions {
 interface PdfTable {
     constructor: string,
     propertyName: string,
-    fieldOptions: PdfTableOptions
+    fieldOptions: PdfTableOptions,
 }
 
 export function PdfTable(options: PdfTableOptions) {
     return function (target: any, propertyKey: string): void {
         PdfTableClass.registerDecorator(target, propertyKey, options);
-    }
+    };
 }
 
 class PdfTableClass {
@@ -80,19 +80,19 @@ class PdfTableClass {
 
 interface PdfTemplateOptions {
     templatePath: string,
-    pdfOptions?: puppeteer.PDFOptions
-    includes?: Asset[]
+    pdfOptions?: puppeteer.PDFOptions,
+    includes?: Asset[],
 }
 
 interface PdfTemplate {
     className: string,
-    options: PdfTemplateOptions
+    options: PdfTemplateOptions,
 }
 
 export function PdfTemplate(options: PdfTemplateOptions) {
     return function (target: any): void {
         PdfTemplateClass.registerDecorator(target, options);
-    }
+    };
 }
 
 class PdfTemplateClass {
@@ -119,7 +119,10 @@ export abstract class PdfFiller {
             let template = (await fs.promises.readFile(classDecorators.options.templatePath)).toString();
 
             fieldDecorators.forEach(property => {
-                template = template.replace(new RegExp(`%%.*?(${property.fieldOptions.fieldName}).*?%%`, 'g'), Reflect.get(this, property.propertyName));
+                template = template.replace(
+                    new RegExp(`%%.*?(${property.fieldOptions.fieldName}).*?%%`, 'g'),
+                    Reflect.get(this, property.propertyName),
+                );
             });
 
             const includes = new Array<Asset>();
@@ -135,15 +138,22 @@ export abstract class PdfFiller {
             if (tableDecorators != null) {
                 const tableData = new Object();
                 tableDecorators.forEach(element => {
-                    Object.defineProperty(tableData, element.fieldOptions.tableName, { value: Reflect.get(this, element.propertyName), enumerable: true });
+                    Object.defineProperty(
+                        tableData, element.fieldOptions.tableName,
+                        {
+                            value: Reflect.get(this, element.propertyName),
+                            enumerable: true,
+                        });
                 });
 
-                let script = (await fs.promises.readFile(path.join(__dirname, '..', 'template', 'js', 'table-generator.js'))).toString();
+                let script = (
+                    await fs.promises.readFile(path.join(__dirname, '..', 'template', 'js', 'table-generator.js'))
+                ).toString();
                 script = script.replace('tablesData', `tablesData = ${stringifyObject(tableData)}`);
                 includes.push({ content: script, type: 'js' });
             }
 
-            let _pdfOptions: puppeteer.PDFOptions = {}
+            let _pdfOptions: puppeteer.PDFOptions = {};
 
             if (classDecorators.options.pdfOptions != null) {
                 _pdfOptions = Object.assign(_pdfOptions, classDecorators.options.pdfOptions);
@@ -158,7 +168,7 @@ export abstract class PdfFiller {
                     template: template,
                     includes: includes,
                 },
-                pdfOptions: _pdfOptions
+                pdfOptions: _pdfOptions,
             });
 
             if (outputPath != null) {

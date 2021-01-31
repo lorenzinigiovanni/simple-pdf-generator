@@ -42,7 +42,10 @@ export class PdfGenerator {
     }
 
     private static async _startBrowser(): Promise<void> {
-        this._browser = await puppeteer.launch({ headless: true, args: ['--proxy-server=\'direct://\'', '--proxy-bypass-list=*'] });
+        this._browser = await puppeteer.launch({
+            headless: true,
+            args: ['--proxy-server=\'direct://\'', '--proxy-bypass-list=*'],
+        });
     }
 
     private static async _startServer(): Promise<void> {
@@ -50,11 +53,11 @@ export class PdfGenerator {
     }
 
     public static async getPdf(options: PdfGeneratorOptions): Promise<Buffer> {
-        if (this._browser == undefined) {
+        if (this._browser === undefined) {
             await this._startBrowser();
         }
 
-        if (this._server == undefined) {
+        if (this._server === undefined) {
             await this._startServer();
         }
 
@@ -63,7 +66,7 @@ export class PdfGenerator {
 
         const template = await this._readContentOrFile(options.options?.template, options.options?.templatePath);
 
-        if (template != '') {
+        if (template !== '') {
             if (/^\s*<!doctype html>/i.test(template)) {
                 await page.setContent(template);
             } else {
@@ -90,9 +93,9 @@ export class PdfGenerator {
                 top: '2cm',
                 bottom: '2cm',
                 left: '1cm',
-                right: '1cm'
-            }
-        }
+                right: '1cm',
+            },
+        };
 
         if (options.pdfOptions != null) {
             pdfOptions = Object.assign(pdfOptions, options.pdfOptions);
@@ -113,10 +116,9 @@ export class PdfGenerator {
                 type = getFileExtension(include.path);
             }
 
-            if (type == 'css') {
+            if (type === 'css') {
                 await page.addStyleTag({ content: include.content, path: include.path });
-            }
-            else if (type == 'js') {
+            } else if (type === 'js') {
                 await page.addScriptTag({ content: include.content, path: include.path });
             }
         }
@@ -130,6 +132,6 @@ export class PdfGenerator {
 
         if ((await fs.promises.stat(path)).isDirectory()) return '';
 
-        return (await fs.promises.readFile(path)).toString()
+        return (await fs.promises.readFile(path)).toString();
     }
 }
