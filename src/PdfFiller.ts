@@ -110,7 +110,7 @@ class PdfTemplateClass {
 // ------------------------------
 
 export abstract class PdfFiller {
-    public async fill(outputPath?: string, pdfOptions?: puppeteer.PDFOptions): Promise<Buffer | undefined> {
+    public async fill(outputPath?: string | null, pdfOptions?: puppeteer.PDFOptions): Promise<Buffer> {
         const fieldDecorators = PdfFieldClass.getDecorators(this);
         const tableDecorators = PdfTableClass.getDecorators(this);
         const classDecorators = PdfTemplateClass.getDecorators(this);
@@ -177,5 +177,7 @@ export abstract class PdfFiller {
 
             return pdf;
         }
+
+        throw new Error('Missing mandatory decorators');
     }
 }
