@@ -13,7 +13,6 @@ function createTables() {
 
         const newTable = document.createElement("table");
         const head = newTable.createTHead().insertRow();
-        const body = newTable.createTBody();
 
         newTable.setAttribute("class", table.getAttribute("class"));
         newTable.setAttribute(":items", table.getAttribute(":items"))
