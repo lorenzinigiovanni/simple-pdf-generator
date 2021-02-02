@@ -83,6 +83,9 @@ export class PdfGenerator {
             await this.includeAssets(page, options.options.includes);
         }
 
+        await page.waitForFunction('window.jQuery');
+        await page.waitForFunction('$(window).ready');
+
         await page.evaluate(() => {
             document.dispatchEvent(new CustomEvent('start'));
         });

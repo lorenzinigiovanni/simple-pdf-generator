@@ -128,7 +128,7 @@ export abstract class PdfFiller {
             const includes = new Array<Asset>();
 
             includes.push({ path: path.join(__dirname, '..', 'template', 'css', 'bootstrap.min.css') });
-            includes.push({ path: path.join(__dirname, '..', 'template', 'js', 'jquery-3.5.1.slim.min.js') });
+            includes.push({ path: path.join(__dirname, '..', 'template', 'js', 'jquery-3.5.1.min.js') });
             includes.push({ path: path.join(__dirname, '..', 'template', 'js', 'bootstrap.min.js') });
 
             classDecorators?.options.includes?.forEach(element => {
