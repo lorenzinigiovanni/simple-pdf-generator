@@ -43,16 +43,16 @@ class PdfFieldClass {
 // ------------------------------
 
 interface PdfTableOptions {
-    tableName: string;
+    tableName?: string;
 }
 
 interface PdfTable {
     constructor: string,
     propertyName: string,
-    fieldOptions: PdfTableOptions,
+    fieldOptions?: PdfTableOptions,
 }
 
-export function PdfTable(options: PdfTableOptions) {
+export function PdfTable(options?: PdfTableOptions) {
     return function (target: any, propertyKey: string): void {
         PdfTableClass.registerDecorator(target, propertyKey, options);
     };
@@ -61,7 +61,7 @@ export function PdfTable(options: PdfTableOptions) {
 class PdfTableClass {
     private static decoratorsMap = new Map<any, PdfTable[]>();
 
-    static registerDecorator(target: any, property: any, options: PdfTableOptions) {
+    static registerDecorator(target: any, property: any, options?: PdfTableOptions) {
         let keys = this.decoratorsMap.get(target);
         if (!keys) {
             keys = [];
@@ -71,8 +71,8 @@ class PdfTableClass {
         keys.push({ propertyName: property, constructor: target.constructor, fieldOptions: options });
     }
 
-    static getDecorators(target: any) {
-        return this.decoratorsMap.get(Object.getPrototypeOf(target));
+    static getDecorators(target: any): PdfTable[] | null {
+        return this.decoratorsMap.get(Object.getPrototypeOf(target)) ?? null;
     }
 }
 
@@ -139,7 +139,7 @@ export abstract class PdfFiller {
                 const tableData = new Object();
                 tableDecorators.forEach(element => {
                     Object.defineProperty(
-                        tableData, element.fieldOptions.tableName,
+                        tableData, element.fieldOptions?.tableName ?? element.propertyName,
                         {
                             value: Reflect.get(this, element.propertyName),
                             enumerable: true,
