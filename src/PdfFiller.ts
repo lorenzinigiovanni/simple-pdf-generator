@@ -7,16 +7,16 @@ import puppeteer from 'puppeteer';
 // ------------------------------
 
 interface PdfFieldOptions {
-    fieldName: string;
+    fieldName?: string;
 }
 
 interface PdfField {
     constructor: string,
     propertyName: string,
-    fieldOptions: PdfFieldOptions
+    fieldOptions?: PdfFieldOptions
 }
 
-export function PdfField(options: PdfFieldOptions) {
+export function PdfField(options?: PdfFieldOptions) {
     return function (target: any, propertyKey: string): void {
         PdfFieldClass.registerDecorator(target, propertyKey, options);
     };
@@ -25,7 +25,7 @@ export function PdfField(options: PdfFieldOptions) {
 class PdfFieldClass {
     private static decoratorsMap = new Map<any, PdfField[]>();
 
-    static registerDecorator(target: any, property: any, options: PdfFieldOptions) {
+    static registerDecorator(target: any, property: any, options?: PdfFieldOptions) {
         let keys = this.decoratorsMap.get(target);
         if (!keys) {
             keys = [];
@@ -35,8 +35,8 @@ class PdfFieldClass {
         keys.push({ propertyName: property, constructor: target.constructor, fieldOptions: options });
     }
 
-    static getDecorators(target: any) {
-        return this.decoratorsMap.get(Object.getPrototypeOf(target));
+    static getDecorators(target: any): PdfField[] | null {
+        return this.decoratorsMap.get(Object.getPrototypeOf(target)) ?? null;
     }
 }
 
@@ -120,7 +120,7 @@ export abstract class PdfFiller {
 
             fieldDecorators.forEach(property => {
                 template = template.replace(
-                    new RegExp(`%%.*?(${property.fieldOptions.fieldName}).*?%%`, 'g'),
+                    new RegExp(`%%${property.fieldOptions?.fieldName ?? property.propertyName}%%`, 'g'),
                     Reflect.get(this, property.propertyName),
                 );
             });
