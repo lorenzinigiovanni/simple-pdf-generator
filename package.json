@@ -1,21 +1,24 @@
 {
   "name": "simple-pdf-generator",
-  "version": "1.0.2",
-  "description": "Generate PDF from HTML template and TS class",
+  "version": "1.0.3",
+  "description": "Generator of PDF files from HTML templates using TS decorators",
   "main": "./lib/index.js",
   "keywords": [
     "pdf",
-    "html"
+    "html",
+    "print",
+    "decorators"
   ],
-  "homepage": "https://github.com/lorenzinigiovanni/simple-pdf-generator",
+  "homepage": "https://github.com/lorenzinigiovanni/simple-pdf-generator#readme",
   "repository": {
     "type": "git",
     "url": "git://github.com/lorenzinigiovanni/simple-pdf-generator.git"
   },
-  "author": {
-    "name": "Giovanni Lorenzini",
-    "url": "https://www.lorenzinigiovanni.com"
-  },
+  "bugs": "https://github.com/lorenzinigiovanni/simple-pdf-generator/issues",
+  "author": "Giovanni Lorenzini <giovanni@lorenzinigiovanni.com> (https://www.lorenzinigiovanni.com/)",
+  "contributors": [
+    "Massimiliano Montagni <massimiliano@solutiontech.tech> (https://www.solutiontech.tech/)"
+  ],
   "license": "MIT",
   "types": "./lib/index.d.ts",
   "devDependencies": {
