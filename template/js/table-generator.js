@@ -1,42 +1,43 @@
-let tables = [];
-var tablesData;
+/* eslint-disable no-undef */
+const tables = [];
+const tablesData;
 
 document.addEventListener('start', () => {
     createTables();
-})
+});
 
 function createTables() {
-    const tablesTag = [...document.getElementsByTagName("inject-table")];
+    const tablesTag = [...document.getElementsByTagName('inject-table')];
 
     for (const table of tablesTag) {
-        const columns = [...table.getElementsByTagName("inject-column")];
+        const columns = [...table.getElementsByTagName('inject-column')];
 
-        const newTable = document.createElement("table");
+        const newTable = document.createElement('table');
         const head = newTable.createTHead().insertRow();
 
-        newTable.setAttribute("class", table.getAttribute("class"));
-        newTable.setAttribute(":items", table.getAttribute(":items"))
-        newTable.setAttribute("id", table.getAttribute("id"));
-        newTable.setAttribute("style", table.getAttribute("style"));
+        newTable.setAttribute('class', table.getAttribute('class'));
+        newTable.setAttribute(':items', table.getAttribute(':items'));
+        newTable.setAttribute('id', table.getAttribute('id'));
+        newTable.setAttribute('style', table.getAttribute('style'));
 
         for (const [i, column] of columns.entries()) {
-            const cell = document.createElement("th");
+            const cell = document.createElement('th');
 
-            cell.style = column.getAttribute("style");
+            cell.style = column.getAttribute('style');
 
-            if (column.className != '') {
+            if (column.className !== '') {
                 cell.className = column.className;
             }
-            if (column.id != '') {
+            if (column.id !== '') {
                 cell.id = column.id;
             }
-            if (column.getAttribute("prop") != null) {
-                cell.setAttribute("prop", column.getAttribute("prop"));
+            if (column.getAttribute('prop') != null) {
+                cell.setAttribute('prop', column.getAttribute('prop'));
             }
 
-            cell.innerText = column.getAttribute("label");
+            cell.innerText = column.getAttribute('label');
 
-            head.appendChild(cell)
+            head.appendChild(cell);
         }
 
         table.replaceWith(newTable);
@@ -47,21 +48,20 @@ function createTables() {
 }
 
 function populateTable(table) {
-    const tableFound = tables.find(x => { return x == table; });
+    const tableFound = tables.find(x => x === table);
     if (tableFound === undefined) return;
 
-    const tablesData = Reflect.get(this, "tablesData");
-    const data = Reflect.get(tablesData, tableFound.getAttribute(":items"));
+    const data = Reflect.get(tablesData, tableFound.getAttribute(':items'));
 
     const headColumns = [...tableFound.tHead.rows[0].cells];
     const body = tableFound.createTBody();
 
     for (const item of data) {
-        let newRow = body.insertRow();
+        const newRow = body.insertRow();
 
         headColumns.forEach(column => {
-            const val = Reflect.get(item, column.getAttribute("prop"));
-            newRow.insertCell().innerHTML = val ?? "";
+            const val = Reflect.get(item, column.getAttribute('prop'));
+            newRow.insertCell().innerHTML = val ?? '';
         });
     }
 }
