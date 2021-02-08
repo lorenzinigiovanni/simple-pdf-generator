@@ -16,7 +16,7 @@
     "name": "Giovanni Lorenzini",
     "url": "https://www.lorenzinigiovanni.com"
   },
-  "license": "ISC",
+  "license": "MIT",
   "types": "./lib/index.d.ts",
   "devDependencies": {
     "@types/lodash": "^4.14.161",
