@@ -1,8 +1,9 @@
+/* eslint-disable no-console */
 import { PrintTable } from './table/PrintTable';
 import { PdfGenerator } from '../src/PdfGenerator';
 import { PrintForm } from './form/PrintForm';
 import path from 'path';
-import fs from 'fs'
+import fs from 'fs';
 
 (async () => {
     try {
@@ -15,7 +16,10 @@ import fs from 'fs'
         //     const table = new PrintTable();
 
         //     table.number = i;
-        //     table.data = [{ index: 1, name: 'Foo', surname: 'Bar', email: 'foo@bar.com' }, { index: 2, name: 'Foo', surname: 'Bar', email: 'foo@bar.com' }];
+        //     table.data = [
+        //         { index: 1, name: 'Foo', surname: 'Bar', email: 'foo@bar.com' },
+        //         { index: 2, name: 'Foo', surname: 'Bar', email: 'foo@bar.com' },
+        //     ];
 
         //     await table.fill(`pdfs/table${i}.pdf`);
         // }
@@ -36,7 +40,7 @@ import fs from 'fs'
                 <div>
                 <p>ciao <span class=pageNumber></span></p>
                 </div>
-                `
+                `,
             });
             if (pdf != null) {
                 await fs.promises.writeFile(`pdfs/form${i}.pdf`, pdf);
@@ -44,8 +48,7 @@ import fs from 'fs'
         }
 
         console.log(new Date().getTime());
-    }
-    catch (error) {
+    } catch (error) {
         console.error(error);
     }
-})()
+})();

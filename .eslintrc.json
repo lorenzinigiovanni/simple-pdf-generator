@@ -16,9 +16,102 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "dot-notation": "off",
+        "explicit-member-accessibility": [
+            "off",
+            {
+                "accessibility": "explicit"
+            }
+        ],
+        "indent": "error",
+        "no-empty-function": "off",
+        "no-shadow": [
+            "error",
+            {
+                "hoist": "all"
+            }
+        ],
         "quotes": [
             "error",
             "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "arrow-body-style": "error",
+        "brace-style": [
+            "error",
+            "1tbs"
+        ],
+        "comma-dangle": [
+            "error",
+            "always-multiline"
+        ],
+        "constructor-super": "error",
+        "eol-last": "error",
+        "eqeqeq": [
+            "error",
+            "smart"
+        ],
+        "guard-for-in": "error",
+        "id-blacklist": "off",
+        "id-match": "off",
+        "max-len": [
+            "error",
+            {
+                "code": 120
+            }
+        ],
+        "no-caller": "error",
+        "no-console": [
+            "error",
+            {
+                "allow": [
+                    "warn",
+                    "dir",
+                    "timeLog",
+                    "assert",
+                    "clear",
+                    "count",
+                    "countReset",
+                    "group",
+                    "groupEnd",
+                    "table",
+                    "info",
+                    "dirxml",
+                    "error",
+                    "groupCollapsed",
+                    "Console",
+                    "profile",
+                    "profileEnd",
+                    "timeStamp",
+                    "context"
+                ]
+            }
+        ],
+        "no-debugger": "error",
+        "no-empty": "off",
+        "no-eval": "error",
+        "no-fallthrough": "error",
+        "no-new-wrappers": "error",
+        "no-restricted-imports": "error",
+        "no-throw-literal": "error",
+        "no-trailing-spaces": "error",
+        "no-undef-init": "error",
+        "no-underscore-dangle": "off",
+        "no-unused-labels": "error",
+        "no-var": "error",
+        "prefer-const": "error",
+        "radix": "error",
+        "spaced-comment": [
+            "error",
+            "always",
+            {
+                "markers": [
+                    "/"
+                ]
+            }
         ]
     }
 }

@@ -1,5 +1,5 @@
-import http from 'http'
-import fs from 'fs'
+import http from 'http';
+import fs from 'fs';
 import path from 'path';
 import { URL } from 'url';
 import { AddressInfo } from 'net';
@@ -27,7 +27,7 @@ export class Server {
     }
 
     private async handleRequest(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
-        res.setHeader('Content-Type', 'text/html')
+        res.setHeader('Content-Type', 'text/html');
 
         if (req.url) {
             let filePath = path.join(__dirname, '..', 'template', req.url);
@@ -39,8 +39,7 @@ export class Server {
 
                 const data = await fs.promises.readFile(filePath);
                 res.end(data);
-            }
-            catch (error) {
+            } catch (error) {
                 res.statusCode = 500;
                 res.end('Ho sfonnato tutto');
             }
