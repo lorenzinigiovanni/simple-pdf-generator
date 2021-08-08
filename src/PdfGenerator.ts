@@ -44,9 +44,15 @@ export class PdfGenerator {
     }
 
     private static async _startBrowser(): Promise<void> {
+        const server_args = ['--proxy-server=\'direct://\'', '--proxy-bypass-list=*'];
+
+        if (process.env.PUPPETEER_NO_SANDBOX === 'true') {
+            server_args.push(...['--no-sandbox', '--disable-setuid-sandbox']);
+        }
+
         this._browser = await puppeteer.launch({
             headless: true,
-            args: ['--proxy-server=\'direct://\'', '--proxy-bypass-list=*'],
+            args: server_args,
         });
     }
 
