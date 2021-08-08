@@ -24,9 +24,11 @@ export interface PdfGeneratorOptions {
 export class PdfGenerator {
     private static _browser: puppeteer.Browser;
     private static _server: Server;
+
     public static get staticFilePath(): string | undefined {
         return this._server.staticFolderPath;
     }
+
     public static set staticFilePath(val: string | undefined) {
         this._server.staticFolderPath = val;
     }
@@ -91,7 +93,7 @@ export class PdfGenerator {
         });
 
         let pdfOptions: puppeteer.PDFOptions = {
-            format: 'A4',
+            format: <puppeteer.PaperFormat>'A4',
             margin: {
                 top: '2cm',
                 bottom: '2cm',
