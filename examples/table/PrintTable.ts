@@ -1,6 +1,13 @@
 import path from 'path';
 import { PdfTemplate, PdfFiller, PdfField, PdfTable } from '../../src/PdfFiller';
 
+interface TableRow {
+    index: number,
+    name: string,
+    surname: string,
+    email: string
+}
+
 @PdfTemplate({
     templatePath: path.join(__dirname, 'table.html'),
     includes: [
@@ -12,5 +19,5 @@ export class PrintTable extends PdfFiller {
     number = NaN;
 
     @PdfTable({ tableName: 'data' })
-    data: any;
+    data = new Array<TableRow>();
 }
