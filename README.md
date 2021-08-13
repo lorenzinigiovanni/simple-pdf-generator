@@ -17,14 +17,14 @@ $ npm install simple-pdf-generator
 
 Simple PDF Generator:
 
-- useses bootstrap theme and js;
-- supports custom css and js;
-- fills custom fields in the html template;
+- useses Bootstrap (5.1.0) and jQuery (3.6.0), they will be injected automatically in the HTML file;
+- supports custom CSS and JS;
+- fills custom fields in the HTML template;
 - can generate dynamic tables automatically.
 
 ## Quick Start
 
-To create a template you need to, create a .ts file with the class:
+In order to have a template you must create a class that extends the `PdfFiller` abstract class:
 
 ```ts
 import path from 'path';
@@ -42,7 +42,7 @@ export class Template extends PdfFiller {
 }
 ```
 
-Add and html file:
+And add the HTML file:
 
 ```html
 <!DOCTYPE html>
@@ -70,7 +70,7 @@ Add and html file:
 </html>
 ```
 
-Then it's finally possible to use the template:
+Then it's finally possible to use the template by calling the `fill()` method in order to generate the PDF:
 
 ```ts
 import path from 'path';
@@ -82,34 +82,41 @@ import { Template } from './Template';
     doc.firstField = 'World';
     doc.secondField = 'Simple PDF Generator';
 
-    doc.fill(path.join(__dirname, 'doc.pdf'));
+    await doc.fill(path.join(__dirname, 'doc.pdf'));
 })();
 ```
 
 ## Generate Tables
 
-To generate tebles is necessary to declare a PdfTable in the class:
+To generate a table you must to use the `PdfTable` decorator on your data property:
 
 ```ts
 import path from 'path';
 import { PdfField, PdfFiller, PdfTable, PdfTemplate } from 'simple-pdf-generator';
 
+interface TableRow {
+    index: number,
+    name: string,
+    surname: string,
+    email: string
+}
+
 @PdfTemplate({
     templatePath: path.join(__dirname, 'template.html'),
 })
 export class Template extends PdfFiller {
-    @PdfField({ fieldName: 'field' })
+    @PdfField({ fieldName: 'custom-field-name' })
     field = '';
 
-    @PdfTable({ fieldName: 'table' })
-    table = '';
+    @PdfTable({ fieldName: 'data' })
+    tableData = new Array<TableRow>();
 }
 ```
 
-In the HTML file write something like this:
+In the HTML file write this:
 
 ```html
-<inject-table :items="data" class="table customClass">
+<inject-table :items="data" class="table">
     <inject-column prop="index" label="#" />
     <inject-column prop="name" label="Name" />
     <inject-column prop="surname" label="Surname" />
@@ -117,7 +124,7 @@ In the HTML file write something like this:
 </inject-table>
 ```
 
-And then use it like this:
+And then, as above, use the `fill()` method like this:
 
 ```ts
 import path from 'path';
@@ -128,18 +135,18 @@ import { Template } from './Template';
 
     doc.field = 'World';
 
-    doc.table = [
+    doc.tableData = [
         { index: 1, name: 'James', surname: 'Smith', email: 'james@smith.com' },
         { index: 2, name: 'Robert', surname: 'Johnson', email: 'robert@johnson.com' },
     ];
 
-    doc.fill(path.join(__dirname, 'doc.pdf'))
+    await doc.fill(path.join(__dirname, 'doc.pdf'))
 })();
 ```
 
-## Include CSS and JS Files
+## Include CSS an JS Files
 
-Through the class decorator is possible to include css and js files. Do not import them in the HTML file, they will be automatically imported.
+Through the class decorator is possible to include CSS and JS files. Do not import them in the HTML file, they will be automatically imported from the `@PdfTemplate()` decorator `includes[]` property.
 
 ```ts
 import path from 'path';
@@ -153,25 +160,59 @@ import { PdfField, PdfFiller, PdfTable, PdfTemplate } from 'simple-pdf-generator
     ] 
 })
 export class Template extends PdfFiller {
-    @PdfField({ fieldName: 'firstField' })
+    @PdfField()
     firstField = '';
 
-    @PdfField({ fieldName: 'secondField' })
+    @PdfField()
     secondField = '';
 }
 ```
 
 ## Options
 
-PdfFiller `fill` function accept two parameters (that can be omitted):
+### `PdfFiller`
+
+Extend abstract class `PdfFiller` and use the following decorators:
+
+| Decorator | Parameters | HTML use |
+|---|---|---|
+| `PdfField` | `{fieldName: string}` | `%%fieldName%%` |
+| `PdfTable` | `{tableName: string}` | `<inject-table :items="fieldName">`<br>&nbsp;&nbsp;&nbsp;&nbsp;`<inject-column prop="name" label="Name"/>`<br>&nbsp;&nbsp;&nbsp;&nbsp;`<inject-column prop="surname" label="Surname"/>`<br>`</inject-table>` |
+
+### `fill`
+
+PdfFiller `fill()` method returns the buffer of the PDF file.
+
+| Parameter | Description |
+|---|---|
+| `outputPath: string` | PDF output dir |
+| `pdfOptions: puppeteer.PDFOptions` | Object with `Puppeteer PDF Options` |
+
+PdfFiller `fill()` method accept two optional parameters:
 - the `outputPath` for the generated file;
-- the `pdfOptions` that accept puppeteer options;
+- the `pdfOptions` that accept `Puppeteer PDF Options`;
 
-PdfFiller `fill` function returns the buffer of the PDF file.
+### `PdfTemplate`
 
-The `pdfOptions` parameter could also be set in the class decorator.
+Use: decorator to be applied to `PdfFiller` class.
 
-For puppeteer PDF options look at their [documentation](https://github.com/puppeteer/puppeteer), we show only a brief example:
+| Parameter | Description |
+|---|---|
+| `templatePath: string` | Path to the HTML file |
+| `pdfOptions: puppeteer.PDFOptions` | Object with `Puppeteer PDF Options` |
+| `includes: Asset[]` | Assets (`css` and `js`) to be included in the HTML file |
+
+```ts
+export interface Asset {
+    path?: string,
+    content?: string,
+    type?: 'css' | 'js'
+}
+```
+
+### `Puppeteer PDF Options`
+
+For `Puppeteer PDF Options` look at their [documentation](https://github.com/puppeteer/puppeteer), we show only a brief example:
 
 ```ts
 pdfOptions = {
@@ -195,6 +236,8 @@ pdfOptions = {
 };
 ```
 
+`Puppeteer PDF Options` used in the decorator of the class.
+
 ```ts
 @PdfTemplate({
     templatePath: path.join(__dirname, 'template.html'),
@@ -213,6 +256,8 @@ export class Template extends PdfFiller {
 }
 ```
 
+`Puppeteer PDF Options` passed to `fill` method.
+
 ```ts
 const doc = new Template();
 
@@ -222,12 +267,26 @@ doc.secondField = 'Simple PDF Generator';
 doc.fill(path.join(__dirname, 'doc.pdf'), pdfOptions);
 ```
 
+### Environment variables
+
+It's possible to use environment variables to modify the behaviour of the library.
+
+| Environment variable | Possible values | Description |
+|---|---|---|
+| `PUPPETEER_NO_HEADLESS` | `true`, `false` | Used to run Chromium in non headless mode. |
+| `PUPPETEER_NO_SANDBOX` | `true`, `false` | Used to run Chromium in containers where a root user is used. |
+| `PUPPETEER_PRODUCT` | `chrome`, `firefox` | Specify which browser to download and use. |
+| `PUPPETEER_CHROMIUM_REVISION` | a chromium version | Specify a version of Chromium you’d like Puppeteer to use. |
+| `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD` | `true`, `false` | Puppeteer will not download the bundled Chromium. You must provide `PUPPETEER_EXECUTABLE_PATH`. |
+| `PUPPETEER_EXECUTABLE_PATH` | a path | Specify an executable path to be used in `puppeteer.launch`. To be specified if `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD` is set to `true`. |
+| `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY` | proxy url  | Defines HTTP proxy settings that are used to download and run Chromium. |
+
 ## People
 
 This library is developed by:
 
-- @lorenzinigiovanni
-- @MassimilianoMontagni
+- @lorenzinigiovanni [lorenzinigiovanni.com](https://www.lorenzinigiovanni.com/)
+- @MassimilianoMontagni [solutiontech.tech](https://www.solutiontech.tech/)
 
 ## License
 
