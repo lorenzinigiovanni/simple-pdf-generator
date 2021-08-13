@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { PrintTable } from './table/PrintTable';
 import { PdfGenerator } from '../src/PdfGenerator';
 import { PrintForm } from './form/PrintForm';
@@ -7,22 +6,20 @@ import fs from 'fs';
 
 (async () => {
     try {
-        console.log(new Date().getTime());
         await PdfGenerator.start();
         PdfGenerator.staticFilePath = path.join(__dirname, '..', 'assets');
-        console.log(new Date().getTime());
 
-        // for (let i = 0; i < 3; i++) {
-        //     const table = new PrintTable();
+        for (let i = 0; i < 3; i++) {
+            const table = new PrintTable();
 
-        //     table.number = i;
-        //     table.data = [
-        //         { index: 1, name: 'Foo', surname: 'Bar', email: 'foo@bar.com' },
-        //         { index: 2, name: 'Foo', surname: 'Bar', email: 'foo@bar.com' },
-        //     ];
+            table.number = i;
+            table.data = [
+                { index: 1, name: 'Foo', surname: 'Bar', email: 'foo@bar.com' },
+                { index: 2, name: 'Foo', surname: 'Bar', email: 'foo@bar.com' },
+            ];
 
-        //     await table.fill(`pdfs/table${i}.pdf`);
-        // }
+            await table.fill(`pdfs/table${i}.pdf`);
+        }
 
         for (let i = 0; i < 3; i++) {
             const form = new PrintForm();
@@ -31,7 +28,7 @@ import fs from 'fs';
             form.name = 'Foo';
             form.surname = 'Bar';
 
-            const pdf = await form.fill(undefined, {
+            const pdf = await form.fill({
                 displayHeaderFooter: true,
                 headerTemplate: `
                 <style>
@@ -42,12 +39,11 @@ import fs from 'fs';
                 </div>
                 `,
             });
+
             if (pdf != null) {
                 await fs.promises.writeFile(`pdfs/form${i}.pdf`, pdf);
             }
         }
-
-        console.log(new Date().getTime());
     } catch (error) {
         console.error(error);
     }

@@ -48,7 +48,7 @@ function createTables() {
 }
 
 function populateTable(table) {
-    const tableFound = tables.find(x => x === table);
+    const tableFound = tables.find(documentTable => documentTable === table);
     if (tableFound === undefined) return;
 
     const data = Reflect.get(tablesData, tableFound.getAttribute(':items'));

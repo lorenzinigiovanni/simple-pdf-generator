@@ -110,7 +110,24 @@ class PdfTemplateClass {
 // ------------------------------
 
 export abstract class PdfFiller {
-    public async fill(outputPath?: string | null, pdfOptions?: puppeteer.PDFOptions): Promise<Buffer> {
+    public async fill(): Promise<Buffer>
+    public async fill(pdfOptions: puppeteer.PDFOptions): Promise<Buffer>
+    public async fill(outputPath: string): Promise<Buffer>
+    public async fill(outputPath: string, pdfOptions: puppeteer.PDFOptions): Promise<Buffer>
+    public async fill(args?: string | puppeteer.PDFOptions, pdfOptions?: puppeteer.PDFOptions): Promise<Buffer> {
+        let outputPath = null;
+        let __pdfOptions = null;
+
+        if (typeof (args) == 'string') {
+            outputPath = args;
+        } else {
+            __pdfOptions = args;
+        }
+
+        if (pdfOptions != null) {
+            __pdfOptions = pdfOptions;
+        }
+
         const fieldDecorators = PdfFieldClass.getDecorators(this);
         const tableDecorators = PdfTableClass.getDecorators(this);
         const classDecorators = PdfTemplateClass.getDecorators(this);
@@ -128,7 +145,7 @@ export abstract class PdfFiller {
             const includes = new Array<Asset>();
 
             includes.push({ path: path.join(__dirname, '..', 'template', 'css', 'bootstrap.min.css') });
-            includes.push({ path: path.join(__dirname, '..', 'template', 'js', 'jquery-3.5.1.min.js') });
+            includes.push({ path: path.join(__dirname, '..', 'template', 'js', 'jquery.min.js') });
             includes.push({ path: path.join(__dirname, '..', 'template', 'js', 'bootstrap.min.js') });
 
             classDecorators?.options.includes?.forEach(element => {
@@ -159,8 +176,8 @@ export abstract class PdfFiller {
                 _pdfOptions = Object.assign(_pdfOptions, classDecorators.options.pdfOptions);
             }
 
-            if (pdfOptions != null) {
-                _pdfOptions = Object.assign(_pdfOptions, pdfOptions);
+            if (__pdfOptions != null) {
+                _pdfOptions = Object.assign(_pdfOptions, __pdfOptions);
             }
 
             const pdf = await PdfGenerator.getPdf({
