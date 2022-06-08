@@ -1,8 +1,8 @@
 import { Asset, PdfGenerator } from './PdfGenerator';
 import path from 'path';
 import fs from 'fs';
-import stringifyObject from 'stringify-object';
 import puppeteer from 'puppeteer';
+import { stringify } from './utils';
 
 // ------------------------------
 
@@ -166,7 +166,7 @@ export abstract class PdfFiller {
                 let script = (
                     await fs.promises.readFile(path.join(__dirname, '..', 'template', 'js', 'table-generator.js'))
                 ).toString();
-                script = script.replace('tablesData', `tablesData = ${stringifyObject(tableData)}`);
+                script = script.replace('tablesData', `tablesData = ${stringify(tableData)}`);
                 includes.push({ content: script, type: 'js' });
             }
 
