@@ -1,4 +1,5 @@
 lib
-pdfs
+examples/pdfs/**
+!examples/pdfs/.gitkeep
 node_modules
 .vscode
