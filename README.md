@@ -1,6 +1,6 @@
 # Simple PDF Generator
 
-Node module that coverts HTML5 files to PDFs.
+Node module that converts HTML5 files to PDFs.
 
 ## Installation
 
