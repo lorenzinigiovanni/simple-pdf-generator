@@ -14,11 +14,23 @@ import fs from 'fs';
 
             table.number = i;
             table.data = [
-                { index: 1, name: 'Foo', surname: 'Bar', email: 'foo@bar.com' },
-                { index: 2, name: 'Foo', surname: 'Bar', email: 'foo@bar.com' },
+                {
+                    index: 1, name: 'Foo', surname: 'Bar', email: 'foo@bar.com',
+                    nestedObject: {
+                        nestedName: 'Foo', nestedSurname: 'Bar',
+                        anotherNestedObject: { group: 'A', groupDescription: 'Group A' },
+                    },
+                },
+                {
+                    index: 2, name: 'Foo', surname: 'Bar', email: 'foo@bar.com',
+                    nestedObject: {
+                        nestedName: 'Foo', nestedSurname: 'Bar',
+                        anotherNestedObject: { group: 'B', groupDescription: 'Group B' },
+                    },
+                },
             ];
 
-            await table.fill(`pdfs/table${i}.pdf`);
+            await table.fill(path.join(__dirname, 'pdfs', `table${i}.pdf`));
         }
 
         for (let i = 0; i < 3; i++) {
@@ -41,7 +53,7 @@ import fs from 'fs';
             });
 
             if (pdf != null) {
-                await fs.promises.writeFile(`pdfs/form${i}.pdf`, pdf);
+                await fs.promises.writeFile(path.join(__dirname, 'pdfs', `form${i}.pdf`), pdf);
             }
         }
     } catch (error) {

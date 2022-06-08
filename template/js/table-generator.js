@@ -20,7 +20,7 @@ function createTables() {
         newTable.setAttribute('id', table.getAttribute('id'));
         newTable.setAttribute('style', table.getAttribute('style'));
 
-        for (const [i, column] of columns.entries()) {
+        for (const column of columns) {
             const cell = document.createElement('th');
 
             cell.style = column.getAttribute('style');
@@ -49,7 +49,7 @@ function createTables() {
 
 function populateTable(table) {
     const tableFound = tables.find(documentTable => documentTable === table);
-    if (tableFound === undefined) return;
+    if (tableFound == null) return;
 
     const data = Reflect.get(tablesData, tableFound.getAttribute(':items'));
 
@@ -60,7 +60,16 @@ function populateTable(table) {
         const newRow = body.insertRow();
 
         headColumns.forEach(column => {
-            const val = Reflect.get(item, column.getAttribute('prop'));
+            let val = Reflect.get(item, column.getAttribute('prop').split('.')[0]);
+            if (val != null && typeof val === 'object') {
+                const nestedProps = column.getAttribute('prop').split('.').slice(1);
+                let nestedVal = val;
+                nestedProps.forEach(prop => {
+                    nestedVal = Reflect.get(nestedVal, prop);
+                });
+                val = nestedVal;
+            }
+
             newRow.insertCell().innerHTML = val ?? '';
         });
     }
