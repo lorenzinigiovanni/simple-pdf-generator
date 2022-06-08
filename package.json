@@ -1,6 +1,6 @@
 {
     "name": "simple-pdf-generator",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "description": "Generator of PDF files from HTML templates using TS decorators",
     "main": "./lib/index.js",
     "keywords": [
@@ -40,7 +40,9 @@
         "puppeteer": "^14.3.0"
     },
     "scripts": {
-        "tsc": "tsc",
+        "publish": "npm publish",
+        "prepublish": "npm run build",
+        "build": "tsc",
         "examples": "ts-node examples/examples.ts",
         "lint": "eslint . --ext .ts"
     }
