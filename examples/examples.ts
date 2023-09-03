@@ -1,31 +1,41 @@
-import { PrintTable } from './table/PrintTable';
-import { PdfGenerator } from '../src/PdfGenerator';
-import { PrintForm } from './form/PrintForm';
+import { TableTemplate } from './table/TableTemplate';
+import { FormTemplate } from './form/FormTemplate';
 import path from 'path';
 import fs from 'fs';
 
 (async () => {
     try {
-        await PdfGenerator.start();
-        PdfGenerator.staticFilePath = path.join(__dirname, '..', 'assets');
-
         for (let i = 0; i < 3; i++) {
-            const table = new PrintTable();
+            const table = new TableTemplate();
 
             table.number = i;
             table.data = [
                 {
-                    index: 1, name: 'Foo', surname: 'Bar', email: 'foo@bar.com',
+                    index: 1,
+                    name: 'Foo',
+                    surname: 'Bar',
+                    email: 'foo@bar.com',
                     nestedObject: {
-                        nestedName: 'Foo', nestedSurname: 'Bar',
-                        anotherNestedObject: { group: 'A', groupDescription: 'Group A' },
+                        nestedName: 'Foo',
+                        nestedSurname: 'Bar',
+                        anotherNestedObject: {
+                            group: 'A',
+                            groupDescription: 'Group A',
+                        },
                     },
                 },
                 {
-                    index: 2, name: 'Foo', surname: 'Bar', email: 'foo@bar.com',
+                    index: 2,
+                    name: 'Pippo',
+                    surname: 'de Pippis',
+                    email: 'pippo@depippis.com',
                     nestedObject: {
-                        nestedName: 'Foo', nestedSurname: 'Bar',
-                        anotherNestedObject: { group: 'B', groupDescription: 'Group B' },
+                        nestedName: 'Pippo',
+                        nestedSurname: 'de Pippis',
+                        anotherNestedObject: {
+                            group: 'B',
+                            groupDescription: 'Group B',
+                        },
                     },
                 },
             ];
@@ -34,13 +44,13 @@ import fs from 'fs';
         }
 
         for (let i = 0; i < 3; i++) {
-            const form = new PrintForm();
+            const form = new FormTemplate();
 
             form.number = i;
             form.name = 'Foo';
             form.surname = 'Bar';
 
-            const pdf = await form.fill({
+            const pdf = await form.fill(undefined, {
                 displayHeaderFooter: true,
                 headerTemplate: `
                 <style>
@@ -53,7 +63,10 @@ import fs from 'fs';
             });
 
             if (pdf != null) {
-                await fs.promises.writeFile(path.join(__dirname, 'pdfs', `form${i}.pdf`), pdf);
+                await fs.promises.writeFile(
+                    path.join(__dirname, 'pdfs', `form${i}.pdf`),
+                    pdf,
+                );
             }
         }
     } catch (error) {

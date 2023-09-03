@@ -17,7 +17,6 @@ $ npm install simple-pdf-generator
 
 Simple PDF Generator:
 
-- useses Bootstrap (5.1.0) and jQuery (3.6.0), they will be injected automatically in the HTML file;
 - supports custom CSS and JS;
 - fills custom fields in the HTML template;
 - can generate dynamic tables automatically.
@@ -105,11 +104,11 @@ interface TableRow {
     templatePath: path.join(__dirname, 'template.html'),
 })
 export class Template extends PdfFiller {
-    @PdfField({ fieldName: 'custom-field-name' })
+    @PdfField()
     field = '';
 
-    @PdfTable({ fieldName: 'data' })
-    tableData = new Array<TableRow>();
+    @PdfTable()
+    data = new Array<TableRow>();
 }
 ```
 
@@ -172,12 +171,12 @@ export class Template extends PdfFiller {
 
 ### `PdfFiller`
 
-Extend abstract class `PdfFiller` and use the following decorators:
+Extend abstract class `PdfFiller` and use the following decorators on the properties:
 
-| Decorator | Parameters | HTML use |
-|---|---|---|
-| `PdfField` | `{fieldName: string}` | `%%fieldName%%` |
-| `PdfTable` | `{tableName: string}` | `<inject-table :items="fieldName">`<br>&nbsp;&nbsp;&nbsp;&nbsp;`<inject-column prop="name" label="Name"/>`<br>&nbsp;&nbsp;&nbsp;&nbsp;`<inject-column prop="surname" label="Surname"/>`<br>`</inject-table>` |
+| Decorator  | HTML use |
+|---|---|
+| `PdfField` | `%%propertyName%%` |
+| `PdfTable` | `<inject-table :items="propertyName">`<br>&nbsp;&nbsp;&nbsp;&nbsp;`<inject-column prop="name" label="Name"/>`<br>&nbsp;&nbsp;&nbsp;&nbsp;`<inject-column prop="surname" label="Surname"/>`<br>`</inject-table>` |
 
 ### `fill`
 
@@ -248,10 +247,10 @@ pdfOptions = {
     pdfOptions: pdfOptions,
 })
 export class Template extends PdfFiller {
-    @PdfField({ fieldName: 'firstField' })
+    @PdfField()
     firstField = '';
 
-    @PdfField({ fieldName: 'secondField' })
+    @PdfField()
     secondField = '';
 }
 ```

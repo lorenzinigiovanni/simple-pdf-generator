@@ -23,13 +23,15 @@ interface TableRow {
 @PdfTemplate({
     templatePath: path.join(__dirname, 'table.html'),
     includes: [
+        { path: path.join(__dirname, '..', 'bootstrap.min.js') },
+        { path: path.join(__dirname, '..', 'bootstrap.min.css') },
         { path: path.join(__dirname, 'table.css') },
     ],
 })
-export class PrintTable extends PdfFiller {
-    @PdfField({ fieldName: 'number' })
-    number = NaN;
+export class TableTemplate extends PdfFiller {
+    @PdfField()
+    public number = NaN;
 
-    @PdfTable({ tableName: 'data' })
-    data = new Array<TableRow>();
+    @PdfTable()
+    public data = new Array<TableRow>();
 }

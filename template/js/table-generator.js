@@ -15,12 +15,27 @@ function createTables() {
         const newTable = document.createElement('table');
         const head = newTable.createTHead().insertRow();
 
-        newTable.setAttribute('class', table.getAttribute('class'));
-        newTable.setAttribute(':items', table.getAttribute(':items'));
-        newTable.setAttribute('id', table.getAttribute('id'));
-        newTable.setAttribute('style', table.getAttribute('style'));
+        const classAttribute = table.getAttribute('class');
+        if (classAttribute != null) {
+            newTable.className = classAttribute;
+        }
 
-        for (const column of columns) {
+        const idAttribute = table.getAttribute('id');
+        if (idAttribute != null) {
+            newTable.id = idAttribute;
+        }
+
+        const styleAttribute = table.getAttribute('style');
+        if (styleAttribute != null) {
+            newTable.style = styleAttribute;
+        }
+
+        const itemAttribute = table.getAttribute('items');
+        if (itemAttribute != null) {
+            newTable.setAttribute('items', itemAttribute);
+        }
+
+        for (const column of columns.values()) {
             const cell = document.createElement('th');
 
             cell.style = column.getAttribute('style');
@@ -48,10 +63,10 @@ function createTables() {
 }
 
 function populateTable(table) {
-    const tableFound = tables.find(documentTable => documentTable === table);
-    if (tableFound == null) return;
+    const tableFound = tables.find((documentTable) => documentTable === table);
+    if (tableFound === undefined) return;
 
-    const data = Reflect.get(tablesData, tableFound.getAttribute(':items'));
+    const data = Reflect.get(tablesData, tableFound.getAttribute('items'));
 
     const headColumns = [...tableFound.tHead.rows[0].cells];
     const body = tableFound.createTBody();
@@ -74,3 +89,5 @@ function populateTable(table) {
         });
     }
 }
+
+createTables();
