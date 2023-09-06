@@ -17,9 +17,9 @@ $ npm install simple-pdf-generator
 
 Simple PDF Generator:
 
-- supports custom CSS and JS;
-- fills custom fields in the HTML template;
-- can generate dynamic tables automatically.
+-   supports custom CSS and JS;
+-   fills custom fields in the HTML template;
+-   can generate dynamic tables automatically.
 
 ## Quick Start
 
@@ -30,7 +30,7 @@ import path from 'path';
 import { PdfField, PdfFiller, PdfTable, PdfTemplate } from 'simple-pdf-generator';
 
 @PdfTemplate({
-    templatePath: path.join(__dirname, 'template.html')
+    templatePath: path.join(__dirname, 'template.html'),
 })
 export class Template extends PdfFiller {
     @PdfField()
@@ -46,26 +46,24 @@ And add the HTML file:
 ```html
 <!DOCTYPE html>
 <html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-
-<body>
-    <div class="container-fluid">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-10 text-center">
-                    <h1>Hello %%firstField%%</h1>
-                    <h2>Welcome in %%secondField%%</h2>
+    <body>
+        <div class="container-fluid">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-10 text-center">
+                        <h1>Hello %%firstField%%</h1>
+                        <h2>Welcome in %%secondField%%</h2>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</body>
-
+    </body>
 </html>
 ```
 
@@ -94,10 +92,10 @@ import path from 'path';
 import { PdfField, PdfFiller, PdfTable, PdfTemplate } from 'simple-pdf-generator';
 
 interface TableRow {
-    index: number,
-    name: string,
-    surname: string,
-    email: string
+    index: number;
+    name: string;
+    surname: string;
+    email: string;
 }
 
 @PdfTemplate({
@@ -139,7 +137,7 @@ import { Template } from './Template';
         { index: 2, name: 'Robert', surname: 'Johnson', email: 'robert@johnson.com' },
     ];
 
-    await doc.fill(path.join(__dirname, 'doc.pdf'))
+    await doc.fill(path.join(__dirname, 'doc.pdf'));
 })();
 ```
 
@@ -153,10 +151,7 @@ import { PdfField, PdfFiller, PdfTable, PdfTemplate } from 'simple-pdf-generator
 
 @PdfTemplate({
     templatePath: path.join(__dirname, 'template.html'),
-    includes: [
-        { path: path.join(__dirname, 'template.css') },
-        { path: path.join(__dirname, 'template.js') },
-    ] 
+    includes: [{ path: path.join(__dirname, 'template.css') }, { path: path.join(__dirname, 'template.js') }],
 })
 export class Template extends PdfFiller {
     @PdfField()
@@ -173,39 +168,41 @@ export class Template extends PdfFiller {
 
 Extend abstract class `PdfFiller` and use the following decorators on the properties:
 
-| Decorator  | HTML use |
-|---|---|
-| `PdfField` | `%%propertyName%%` |
+| Decorator  | HTML use                                                                                                                                                                                                        |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PdfField` | `%%propertyName%%`                                                                                                                                                                                              |
 | `PdfTable` | `<inject-table :items="propertyName">`<br>&nbsp;&nbsp;&nbsp;&nbsp;`<inject-column prop="name" label="Name"/>`<br>&nbsp;&nbsp;&nbsp;&nbsp;`<inject-column prop="surname" label="Surname"/>`<br>`</inject-table>` |
 
 ### `fill`
 
 PdfFiller `fill()` method returns the buffer of the PDF file.
 
-| Parameter | Description |
-|---|---|
-| `outputPath: string` | PDF output dir |
+| Parameter                          | Description                         |
+| ---------------------------------- | ----------------------------------- |
+| `outputPath: string`               | PDF output dir                      |
 | `pdfOptions: puppeteer.PDFOptions` | Object with `Puppeteer PDF Options` |
 
 PdfFiller `fill()` method accept two optional parameters:
-- the `outputPath` for the generated file;
-- the `pdfOptions` that accept `Puppeteer PDF Options`;
+
+-   the `outputPath` for the generated file;
+-   the `pdfOptions` that accept `Puppeteer PDF Options`;
 
 ### `PdfTemplate`
 
 Use: decorator to be applied to `PdfFiller` class.
 
-| Parameter | Description |
-|---|---|
-| `templatePath: string` | Path to the HTML file |
-| `pdfOptions: puppeteer.PDFOptions` | Object with `Puppeteer PDF Options` |
-| `includes: Asset[]` | Assets (`css` and `js`) to be included in the HTML file |
+| Parameter                          | Description                                             |
+| ---------------------------------- | ------------------------------------------------------- |
+| `templatePath: string`             | Path to the HTML file                                   |
+| `pdfOptions: puppeteer.PDFOptions` | Object with `Puppeteer PDF Options`                     |
+| `xssProtection: boolean`           | Enable or disable XSS protection (default: `true`)      |
+| `includes: Asset[]`                | Assets (`css` and `js`) to be included in the HTML file |
 
 ```ts
 export interface Asset {
-    path?: string,
-    content?: string,
-    type?: 'css' | 'js'
+    path?: string;
+    content?: string;
+    type?: 'css' | 'js';
 }
 ```
 
@@ -230,7 +227,7 @@ pdfOptions = {
         top: '5cm',
         bottom: '4cm',
         left: '1cm',
-        right: '1cm'
+        right: '1cm',
     },
 };
 ```
@@ -240,10 +237,7 @@ pdfOptions = {
 ```ts
 @PdfTemplate({
     templatePath: path.join(__dirname, 'template.html'),
-    includes: [
-        { path: path.join(__dirname, 'template.css') },
-        { path: path.join(__dirname, 'template.js') },
-    ],
+    includes: [{ path: path.join(__dirname, 'template.css') }, { path: path.join(__dirname, 'template.js') }],
     pdfOptions: pdfOptions,
 })
 export class Template extends PdfFiller {
@@ -270,22 +264,22 @@ doc.fill(path.join(__dirname, 'doc.pdf'), pdfOptions);
 
 It's possible to use environment variables to modify the behaviour of the library.
 
-| Environment variable | Possible values | Description |
-|---|---|---|
-| `PUPPETEER_NO_HEADLESS` | `true`, `false` | Used to run Chromium in non headless mode. |
-| `PUPPETEER_NO_SANDBOX` | `true`, `false` | Used to run Chromium in containers where a root user is used. |
-| `PUPPETEER_PRODUCT` | `chrome`, `firefox` | Specify which browser to download and use. |
-| `PUPPETEER_CHROMIUM_REVISION` | a chromium version | Specify a version of Chromium you’d like Puppeteer to use. |
-| `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD` | `true`, `false` | Puppeteer will not download the bundled Chromium. You must provide `PUPPETEER_EXECUTABLE_PATH`. |
-| `PUPPETEER_EXECUTABLE_PATH` | a path | Specify an executable path to be used in `puppeteer.launch`. To be specified if `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD` is set to `true`. |
-| `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY` | proxy url  | Defines HTTP proxy settings that are used to download and run Chromium. |
+| Environment variable                    | Possible values     | Description                                                                                                                          |
+| --------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `PUPPETEER_NO_HEADLESS`                 | `true`, `false`     | Used to run Chromium in non headless mode.                                                                                           |
+| `PUPPETEER_NO_SANDBOX`                  | `true`, `false`     | Used to run Chromium in containers where a root user is used.                                                                        |
+| `PUPPETEER_PRODUCT`                     | `chrome`, `firefox` | Specify which browser to download and use.                                                                                           |
+| `PUPPETEER_CHROMIUM_REVISION`           | a chromium version  | Specify a version of Chromium you’d like Puppeteer to use.                                                                           |
+| `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD`      | `true`, `false`     | Puppeteer will not download the bundled Chromium. You must provide `PUPPETEER_EXECUTABLE_PATH`.                                      |
+| `PUPPETEER_EXECUTABLE_PATH`             | a path              | Specify an executable path to be used in `puppeteer.launch`. To be specified if `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD` is set to `true`. |
+| `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY` | proxy url           | Defines HTTP proxy settings that are used to download and run Chromium.                                                              |
 
 ## People
 
 This library is developed by:
 
-- @lorenzinigiovanni [lorenzinigiovanni.com](https://www.lorenzinigiovanni.com/)
-- @MassimilianoMontagni [solutiontech.tech](https://www.solutiontech.tech/)
+-   @lorenzinigiovanni [lorenzinigiovanni.com](https://www.lorenzinigiovanni.com/)
+-   @MassimilianoMontagni [solutiontech.tech](https://www.solutiontech.tech/)
 
 ## License
 

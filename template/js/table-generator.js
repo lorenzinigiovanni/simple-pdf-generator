@@ -1,10 +1,5 @@
 /* eslint-disable no-undef */
-const tables = [];
 const tablesData;
-
-document.addEventListener('start', () => {
-    createTables();
-});
 
 function createTables() {
     const tablesTag = [...document.getElementsByTagName('inject-table')];
@@ -13,7 +8,6 @@ function createTables() {
         const columns = [...table.getElementsByTagName('inject-column')];
 
         const newTable = document.createElement('table');
-        const head = newTable.createTHead().insertRow();
 
         const classAttribute = table.getAttribute('class');
         if (classAttribute != null) {
@@ -35,6 +29,7 @@ function createTables() {
             newTable.setAttribute('items', itemAttribute);
         }
 
+        const head = newTable.createTHead().insertRow();
         for (const column of columns.values()) {
             const cell = document.createElement('th');
 
@@ -51,35 +46,34 @@ function createTables() {
             }
 
             cell.innerText = column.getAttribute('label');
+            if (column.getAttribute('label') == null) {
+                cell.style.display = 'none';
+            }
 
             head.appendChild(cell);
         }
 
         table.replaceWith(newTable);
-        tables.push(newTable);
 
         populateTable(newTable);
     }
 }
 
 function populateTable(table) {
-    const tableFound = tables.find((documentTable) => documentTable === table);
-    if (tableFound === undefined) return;
+    const data = Reflect.get(tablesData, table.getAttribute('items'));
 
-    const data = Reflect.get(tablesData, tableFound.getAttribute('items'));
-
-    const headColumns = [...tableFound.tHead.rows[0].cells];
-    const body = tableFound.createTBody();
+    const headColumns = [...table.tHead.rows[0].cells];
+    const body = table.createTBody();
 
     for (const item of data) {
         const newRow = body.insertRow();
 
-        headColumns.forEach(column => {
+        headColumns.forEach((column) => {
             let val = Reflect.get(item, column.getAttribute('prop').split('.')[0]);
             if (val != null && typeof val === 'object') {
                 const nestedProps = column.getAttribute('prop').split('.').slice(1);
                 let nestedVal = val;
-                nestedProps.forEach(prop => {
+                nestedProps.forEach((prop) => {
                     nestedVal = Reflect.get(nestedVal, prop);
                 });
                 val = nestedVal;

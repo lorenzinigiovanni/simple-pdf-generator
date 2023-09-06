@@ -4,7 +4,7 @@ import fs from 'fs';
 import { PDFOptions } from 'puppeteer';
 import { stringify } from './utils';
 import mime from 'mime';
-import validator from 'validator';
+import xss from 'xss';
 
 // ------------------------------
 
@@ -21,10 +21,7 @@ export function PdfField() {
 class PdfFieldClass {
     private static decoratorsMap = new Map<object, Map<string, PdfField>>();
 
-    static registerDecorator(
-        target: object,
-        property: string,
-    ) {
+    static registerDecorator(target: object, property: string) {
         let keys = this.decoratorsMap.get(target);
         if (!keys) {
             keys = new Map<string, PdfField>();
@@ -56,10 +53,7 @@ export function PdfTable() {
 class PdfTableClass {
     private static decoratorsMap = new Map<object, PdfTable[]>();
 
-    static registerDecorator(
-        target: object,
-        property: string,
-    ) {
+    static registerDecorator(target: object, property: string) {
         let keys = this.decoratorsMap.get(target);
         if (!keys) {
             keys = [];
@@ -82,6 +76,7 @@ type PdfTemplateOptions = {
     templatePath: string;
     pdfOptions?: PDFOptions;
     includes?: Asset[];
+    xssProtection?: boolean;
 };
 
 type PdfTemplate = {
@@ -113,9 +108,7 @@ class PdfTemplateClass {
 // ------------------------------
 
 export abstract class PdfFiller {
-    [key: string]: unknown;
-
-    private static searchRegex = new RegExp('(?:%%(?<propName>.*)%%)|(?:<img[^>]*src="(?<imgSrc>.*?)"[^>]*>)', 'g');
+    private static searchRegex = new RegExp('(?:%%(?<propName>.*?)%%)|(?:<img[^>]*src="(?<imgSrc>.*?)"[^>]*>)', 'g');
 
     public async fill(): Promise<Buffer>;
     public async fill(outputPath?: string): Promise<Buffer>;
@@ -129,6 +122,10 @@ export abstract class PdfFiller {
             throw new Error('Missing mandatory decorators');
         }
 
+        if (classDecorators.options.xssProtection == null) {
+            classDecorators.options.xssProtection = true;
+        }
+
         let template = (await fs.promises.readFile(classDecorators.options.templatePath)).toString();
 
         const includes = new Array<Asset>();
@@ -140,34 +137,38 @@ export abstract class PdfFiller {
         const matches = template.matchAll(PdfFiller.searchRegex);
         for (const match of matches) {
             if (match.groups?.['propName'] != null) {
-                if (fieldDecorators != null) {
-                    const decorator = fieldDecorators.get(match.groups.propName);
-                    if (decorator != null) {
-                        const value = Reflect.get(this, decorator.propertyName);
-                        if (value != null) {
-                            template = template.replace(match[0], validator.escape(value.toString()));
-                        }
-                    }
+                if (fieldDecorators == null) {
+                    continue;
                 }
+
+                const decorator = fieldDecorators.get(match.groups.propName);
+                if (decorator == null) {
+                    continue;
+                }
+
+                const value = Reflect.get(this, decorator.propertyName);
+                if (value == null) {
+                    continue;
+                }
+
+                const propValue = classDecorators.options.xssProtection ? xss(value.toString()) : value.toString();
+                template = template.replace(match[0], propValue);
             } else if (match.groups?.['imgSrc'] != null) {
                 const mimeType = mime.getType(match.groups.imgSrc);
-
-                if (mimeType != null) {
-                    try {
-                        let imgSrc = match.groups.imgSrc;
-                        if (!path.isAbsolute(match.groups.imgSrc)) {
-                            imgSrc = path.join(path.dirname(classDecorators.options.templatePath), match.groups.imgSrc);
-                        }
-
-                        const data = await fs.promises.readFile(imgSrc);
-                        const base64 = data.toString('base64');
-                        const newSrc = `data:${mimeType};base64,${base64}`;
-
-                        template = template.replace(match[0], match[0].replace(match.groups.imgSrc, newSrc));
-                    } catch (e) {
-                        console.error(e);
-                    }
+                if (mimeType == null) {
+                    continue;
                 }
+
+                let imgSrc = match.groups.imgSrc;
+                if (!path.isAbsolute(match.groups.imgSrc)) {
+                    imgSrc = path.join(path.dirname(classDecorators.options.templatePath), match.groups.imgSrc);
+                }
+
+                const data = await fs.promises.readFile(imgSrc);
+                const base64 = data.toString('base64');
+                const newSrc = `data:${mimeType};base64,${base64}`;
+
+                template = template.replace(match[0], match[0].replace(match.groups.imgSrc, newSrc));
             }
         }
 
@@ -181,7 +182,8 @@ export abstract class PdfFiller {
             }
 
             let script = PdfGenerator.tableGeneratorScript;
-            script = script.replace('tablesData', `tablesData = ${stringify(tableData)}`);
+            const tablesData = classDecorators.options.xssProtection ? xss(stringify(tableData)) : stringify(tableData);
+            script = script.replace('tablesData', xss(`tablesData = ${tablesData}`));
             includes.push({ content: script, type: 'js' });
         }
 

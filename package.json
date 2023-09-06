@@ -1,6 +1,6 @@
 {
     "name": "simple-pdf-generator",
-    "version": "3.0.0",
+    "version": "3.2.0",
     "description": "Generator of PDF files from HTML templates using TS decorators",
     "main": "./lib/index.js",
     "keywords": [
@@ -39,7 +39,7 @@
     "dependencies": {
         "mime": "^3.0.0",
         "puppeteer": "^21.1.1",
-        "validator": "^13.11.0"
+        "xss": "^1.0.14"
     },
     "scripts": {
         "publish": "npm publish",

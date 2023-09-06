@@ -22,7 +22,6 @@ export interface PdfGeneratorOptions {
 
 export class PdfGenerator {
     private static _browser: Browser | null;
-    private static _browserDisconnected = false;
 
     private static _tableGeneratorScript = '';
     public static get tableGeneratorScript(): string {
@@ -48,20 +47,14 @@ export class PdfGenerator {
             defaultViewport: null,
         });
 
-        this._browserDisconnected = false;
         this._browser.on('disconnected', async () => {
-            this._browserDisconnected = true;
-            await this._browser?.close();
+            this._browser?.close();
             this._browser = null;
+            await this._startBrowser();
         });
     }
 
     public static async getPdf(options: PdfGeneratorOptions): Promise<Buffer> {
-        if (this._browserDisconnected) {
-            await new Promise((f) => setTimeout(f, 10000));
-            await this._startBrowser();
-        }
-
         if (this._browser == null) {
             await this._startBrowser();
         }
@@ -105,6 +98,8 @@ export class PdfGenerator {
     }
 
     private static async _includeAssets(page: Page, includes: Asset[]): Promise<void> {
+        const promises = [];
+
         for (const include of includes) {
             let type = '';
             if (include.type != null) {
@@ -114,16 +109,22 @@ export class PdfGenerator {
             }
 
             if (type === 'css') {
-                await page.addStyleTag({
-                    content: include.content,
-                    path: include.path,
-                });
+                promises.push(
+                    page.addStyleTag({
+                        content: include.content,
+                        path: include.path,
+                    }),
+                );
             } else if (type === 'js') {
-                await page.addScriptTag({
-                    content: include.content,
-                    path: include.path,
-                });
+                promises.push(
+                    page.addScriptTag({
+                        content: include.content,
+                        path: include.path,
+                    }),
+                );
             }
         }
+
+        await Promise.all(promises);
     }
 }
