@@ -98,8 +98,6 @@ export class PdfGenerator {
     }
 
     private static async _includeAssets(page: Page, includes: Asset[]): Promise<void> {
-        const promises = [];
-
         for (const include of includes) {
             let type = '';
             if (include.type != null) {
@@ -109,22 +107,16 @@ export class PdfGenerator {
             }
 
             if (type === 'css') {
-                promises.push(
-                    page.addStyleTag({
-                        content: include.content,
-                        path: include.path,
-                    }),
-                );
+                await page.addStyleTag({
+                    content: include.content,
+                    path: include.path,
+                });
             } else if (type === 'js') {
-                promises.push(
-                    page.addScriptTag({
-                        content: include.content,
-                        path: include.path,
-                    }),
-                );
+                await page.addScriptTag({
+                    content: include.content,
+                    path: include.path,
+                });
             }
         }
-
-        await Promise.all(promises);
     }
 }

@@ -1,6 +1,6 @@
 {
     "name": "simple-pdf-generator",
-    "version": "3.2.0",
+    "version": "3.3.0",
     "description": "Generator of PDF files from HTML templates using TS decorators",
     "main": "./lib/index.js",
     "keywords": [

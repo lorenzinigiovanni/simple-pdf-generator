@@ -113,7 +113,7 @@ export class Template extends PdfFiller {
 In the HTML file write this:
 
 ```html
-<inject-table :items="data" class="table">
+<inject-table items="data" class="table">
     <inject-column prop="index" label="#" />
     <inject-column prop="name" label="Name" />
     <inject-column prop="surname" label="Surname" />
@@ -171,7 +171,7 @@ Extend abstract class `PdfFiller` and use the following decorators on the proper
 | Decorator  | HTML use                                                                                                                                                                                                        |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `PdfField` | `%%propertyName%%`                                                                                                                                                                                              |
-| `PdfTable` | `<inject-table :items="propertyName">`<br>&nbsp;&nbsp;&nbsp;&nbsp;`<inject-column prop="name" label="Name"/>`<br>&nbsp;&nbsp;&nbsp;&nbsp;`<inject-column prop="surname" label="Surname"/>`<br>`</inject-table>` |
+| `PdfTable` | `<inject-table items="propertyName">`<br>&nbsp;&nbsp;&nbsp;&nbsp;`<inject-column prop="name" label="Name"/>`<br>&nbsp;&nbsp;&nbsp;&nbsp;`<inject-column prop="surname" label="Surname"/>`<br>`</inject-table>` |
 
 ### `fill`
 
